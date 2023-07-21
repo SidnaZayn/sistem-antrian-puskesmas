@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue';
 
 export const useAntrianStore = defineStore('antrian', () => {
     const poliUmum = [];
@@ -11,5 +12,7 @@ export const useAntrianStore = defineStore('antrian', () => {
     let jmlAnak = 0;
     let jmlTHT = 0;
 
-    return { poliUmum, poliGigi, poliAnak, poliTHT, jmlUmum, jmlGigi, jmlAnak, jmlTHT }
+    const currentAntrian = ref({});
+
+    return { poliUmum, poliGigi, poliAnak, poliTHT, jmlUmum, jmlGigi, jmlAnak, jmlTHT, currentAntrian }
 })

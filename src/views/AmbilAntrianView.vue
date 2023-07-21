@@ -1,7 +1,8 @@
 <template>
   <div class="mt-5">
+    <wc-toast position="top-right"></wc-toast>
     <p class="text-center text-3xl font-bold">AMBIL ANTRIAN</p>
-    <div class="grid justify-items-center p-3">
+    <div class="grid justify-items-center p-3" v-if="!isAmbilAntrian">
       <Form @submit="ambilAntrian" class="w-6/12">
         <div class="mb-3">
           <div class="flex justify-between">
@@ -62,17 +63,23 @@
           </div>
         </div>
         <div class="grid justify-items-center mt-5">
-            <div class="flex">  
-                <button class="bg-blue-700 hover:bg-blue-900 text-white p-4 rounded-lg text-center mr-2">
-                  Ambil Antrian
-                </button>
-                <RouterLink class="bg-blue-700 hover:bg-blue-900 text-white p-4 rounded-lg text-center" to="/">
-                  Kembali
-                </RouterLink>
-            </div>
+          <div class="flex">
+            <button
+              class="bg-blue-700 hover:bg-blue-900 text-white p-4 rounded-lg text-center mr-2"
+            >
+              Ambil Antrian
+            </button>
+            <RouterLink
+              class="bg-blue-700 hover:bg-blue-900 text-white p-4 rounded-lg text-center"
+              to="/"
+            >
+              Kembali
+            </RouterLink>
+          </div>
         </div>
       </Form>
     </div>
+    <NomorAntrian v-else :nomor-antrian="store.currentAntrian.id" @back="isAmbilAntrian = false" />
   </div>
 </template>
 
@@ -80,35 +87,47 @@
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { useAntrianStore } from "../store/store";
 import { RouterLink } from "vue-router";
+import { toast } from "https://cdn.skypack.dev/wc-toast";
+import { ref } from "vue";
+import NomorAntrian from "../components/NomorAntrian.vue";
 
 const store = useAntrianStore();
-const ambilAntrian = (value) => {
+const ambilAntrian = (value, { resetForm }) => {
   const { poli, ...pasien } = value;
   if (poli == 1) {
     const id = `A${store.jmlUmum}`;
     store.poliUmum.push({ ...pasien, id: id });
+    store.currentAntrian = { ...pasien, id: id };
     store.jmlUmum++;
-    console.log(store.poliUmum);
   }
   if (poli == 2) {
     const id = `B${store.jmlGigi}`;
     store.poliGigi.push({ ...pasien, id: id });
+    store.currentAntrian = { ...pasien, id: id };
     store.jmlGigi++;
-    console.log(store.poliGigi);
   }
   if (poli == 3) {
     const id = `C${store.jmlAnak}`;
     store.poliAnak.push({ ...pasien, id: id });
+    store.currentAntrian = { ...pasien, id: id };
     store.jmlAnak++;
-    console.log(store.poliAnak);
   }
   if (poli == 4) {
     const id = `D${store.jmlTHT}`;
     store.poliTHT.push({ ...pasien, id: id });
+    store.currentAntrian = { ...pasien, id: id };
     store.jmlTHT++;
-    console.log(store.poliTHT);
   }
+  toast.success("Berhasil Mengambil Antrian !", {
+    duration: 2000,
+    theme: { type: "custom", style: { background: "#047857", color: "white", padding: "100px" } },
+  });
+  isAmbilAntrian.value = true;
+
+  resetForm();
 };
+
+const isAmbilAntrian = ref(false);
 
 const validate = (value) => {
   // if the field is empty
